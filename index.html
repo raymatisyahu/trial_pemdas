@@ -1,0 +1,753 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GEMDAS Quest - Grade 6</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #10142e, #202b52, #111827);
+  color: white;
+  min-height: 100vh;
+  padding: 15px;
+}
+
+.container {
+  max-width: 950px;
+  margin: auto;
+}
+
+header {
+  text-align: center;
+  padding: 10px;
+}
+
+header h1 {
+  color: #ffdf4d;
+  font-size: clamp(25px, 4vw, 40px);
+  margin: 8px;
+  text-shadow: 0 0 15px #ff9d00;
+}
+
+header p {
+  color: #d8e2ff;
+  margin: 5px;
+}
+
+.stats {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 15px 0;
+}
+
+.stat {
+  background: #29365d;
+  border: 1px solid #52679d;
+  border-radius: 12px;
+  padding: 12px 20px;
+  text-align: center;
+  flex: 1;
+  min-width: 110px;
+}
+
+.stat span {
+  display: block;
+  font-size: 12px;
+  color: #b9c9f8;
+  margin-bottom: 5px;
+}
+
+.stat strong {
+  font-size: 22px;
+  color: #ffe66d;
+}
+
+.progress-bg {
+  height: 12px;
+  background: #333e60;
+  border-radius: 20px;
+  overflow: hidden;
+  margin: 15px 0;
+}
+
+#progress {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #00e5ff, #7cff6b);
+  transition: width 0.4s;
+}
+
+.arena {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin: 15px 0;
+}
+
+.character {
+  background: linear-gradient(145deg, #28365d, #151d39);
+  border: 1px solid #50649c;
+  border-radius: 15px;
+  padding: 12px;
+  text-align: center;
+}
+
+.character .emoji {
+  font-size: 55px;
+  display: block;
+  margin: 5px;
+}
+
+.character h3 {
+  margin: 5px;
+  color: #ffdf4d;
+}
+
+.hp-bg {
+  height: 12px;
+  background: #4b2536;
+  border-radius: 20px;
+  overflow: hidden;
+  margin-top: 8px;
+}
+
+.hp {
+  height: 100%;
+  width: 100%;
+  background: #ff4b64;
+  transition: width 0.4s;
+}
+
+.card {
+  background: #f8faff;
+  color: #17213e;
+  border-radius: 20px;
+  padding: 25px;
+  margin-top: 15px;
+  box-shadow: 0 8px 30px #0005;
+}
+
+.question-top {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.badge {
+  background: #e2eaff;
+  color: #263b77;
+  padding: 8px 14px;
+  border-radius: 30px;
+  font-weight: bold;
+}
+
+.timer {
+  color: #e44747;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.question {
+  font-size: clamp(25px, 4vw, 36px);
+  text-align: center;
+  margin: 30px 0;
+  font-weight: bold;
+  color: #1b2b55;
+}
+
+input {
+  display: block;
+  width: 100%;
+  max-width: 350px;
+  margin: 15px auto;
+  padding: 15px;
+  font-size: 25px;
+  text-align: center;
+  border: 2px solid #9aabd2;
+  border-radius: 12px;
+  outline: none;
+}
+
+input:focus {
+  border-color: #455ed8;
+}
+
+button {
+  border: none;
+  border-radius: 12px;
+  padding: 14px 22px;
+  font-size: 17px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.primary {
+  background: #4056d6;
+  color: white;
+}
+
+.secondary {
+  background: #e5eaff;
+  color: #263b77;
+}
+
+.button-row {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.feedback {
+  padding: 15px;
+  border-radius: 12px;
+  margin-top: 15px;
+  display: none;
+  line-height: 1.6;
+}
+
+.correct {
+  background: #dcfce7;
+  color: #166534;
+  border: 1px solid #86efac;
+}
+
+.wrong {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fca5a5;
+}
+
+.discussion {
+  background: #eaf1ff;
+  border-left: 5px solid #4056d6;
+  border-radius: 10px;
+  padding: 18px;
+  margin-top: 20px;
+  display: none;
+  line-height: 1.7;
+}
+
+.discussion h3 {
+  color: #243a8a;
+  margin-top: 0;
+}
+
+.step {
+  background: white;
+  padding: 10px 14px;
+  border-radius: 8px;
+  margin: 8px 0;
+  font-size: 17px;
+}
+
+.rule {
+  background: #fff5cc;
+  color: #6c4b00;
+  padding: 14px;
+  border-radius: 10px;
+  margin: 15px 0;
+  line-height: 1.6;
+}
+
+#result {
+  display: none;
+  text-align: center;
+}
+
+#result h2 {
+  color: #ffca28;
+  font-size: 30px;
+}
+
+.result-score {
+  font-size: 45px;
+  color: #ffca28;
+  font-weight: bold;
+  margin: 15px;
+}
+
+.review {
+  text-align: left;
+  background: white;
+  color: #17213e;
+  padding: 15px;
+  border-radius: 12px;
+  margin-top: 12px;
+  line-height: 1.6;
+}
+
+footer {
+  text-align: center;
+  color: #aebce6;
+  padding: 20px;
+  font-size: 13px;
+}
+
+@media(max-width:600px) {
+  .arena {
+    gap: 8px;
+  }
+
+  .character .emoji {
+    font-size: 40px;
+  }
+
+  .card {
+    padding: 18px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<header>
+  <h1>⚔️ GEMDAS QUEST ⚔️</h1>
+  <p>Battle of the Numbers | Grade 6 Mathematics</p>
+  <p>Defeat the Math Monsters by mastering GEMDAS!</p>
+</header>
+
+<div class="rule">
+  <strong>📜 GEMDAS RULE:</strong><br>
+  G – Grouping Symbols<br>
+  E – Exponents<br>
+  M and D – Multiplication and Division, from left to right<br>
+  A and S – Addition and Subtraction, from left to right
+</div>
+
+<div class="stats">
+  <div class="stat">
+    <span>QUESTION</span>
+    <strong id="qNum">1 / 7</strong>
+  </div>
+  <div class="stat">
+    <span>YOUR SCORE</span>
+    <strong id="score">0</strong>
+  </div>
+  <div class="stat">
+    <span>XP EARNED</span>
+    <strong id="xp">0</strong>
+  </div>
+</div>
+
+<div class="progress-bg">
+  <div id="progress"></div>
+</div>
+
+<div class="arena">
+  <div class="character">
+    <span class="emoji">🧙‍♂️</span>
+    <h3>Math Wizard</h3>
+    <p>Hero HP: <span id="heroHP">100</span>%</p>
+    <div class="hp-bg">
+      <div class="hp" id="heroBar"></div>
+    </div>
+  </div>
+
+  <div class="character">
+    <span class="emoji" id="monster">👹</span>
+    <h3 id="monsterName">GEMDAS Goblin</h3>
+    <p>Monster HP: <span id="enemyHP">100</span>%</p>
+    <div class="hp-bg">
+      <div class="hp" id="enemyBar"></div>
+    </div>
+  </div>
+</div>
+
+<div class="card" id="game">
+
+  <div class="question-top">
+    <span class="badge" id="level">LEVEL 1</span>
+    <span class="timer">⏱ <span id="time">60</span> seconds</span>
+  </div>
+
+  <div class="question" id="question">
+    40 - 20 ÷ (5 + 5) =
+  </div>
+
+  <p style="text-align:center">
+    Solve the expression. Enter your final answer below.
+  </p>
+
+  <input
+    type="number"
+    id="answer"
+    placeholder="Your answer"
+    autocomplete="off"
+  >
+
+  <div class="button-row">
+    <button class="primary" id="submitBtn" onclick="checkAnswer()">
+      ⚡ ATTACK!
+    </button>
+    <button class="secondary" onclick="showHint()">
+      💡 Hint
+    </button>
+  </div>
+
+  <div class="feedback" id="feedback"></div>
+
+  <div class="discussion" id="discussion">
+    <h3>📖 Let's Discuss the Solution!</h3>
+    <div id="steps"></div>
+    <div class="rule" id="ruleNote"></div>
+    <div class="button-row">
+      <button class="primary" onclick="nextQuestion()">
+        NEXT QUEST ➜
+      </button>
+    </div>
+  </div>
+
+  <div id="hint" class="feedback" style="background:#fff5cc;color:#795600">
+  </div>
+
+</div>
+
+<div class="card" id="result">
+  <h2>🏆 QUEST COMPLETED!</h2>
+  <div style="font-size:60px" id="trophy">🏆</div>
+  <p>Great job, Math Adventurer!</p>
+  <div class="result-score" id="finalScore">0 / 7</div>
+  <p id="resultMessage"></p>
+  <p id="finalXP"></p>
+  <h3>📚 Answer Review</h3>
+  <div id="reviewList"></div>
+  <div class="button-row">
+    <button class="primary" onclick="restartGame()">🔄 PLAY AGAIN</button>
+  </div>
+</div>
+
+<footer>
+  GEMDAS QUEST | Mathematics 6 | Learn, Solve, Conquer!
+</footer>
+
+</div>
+
+<script>
+const questions = [
+  {
+    q: "40 - 20 ÷ (5 + 5) =",
+    answer: 38,
+    monster: "GEMDAS Goblin",
+    hint: "Start with the grouping symbol (5 + 5).",
+    steps: [
+      "<strong>Step 1: Grouping symbols</strong><br>(5 + 5) = 10<br>Expression: 40 - 20 ÷ 10",
+      "<strong>Step 2: Division</strong><br>20 ÷ 10 = 2<br>Expression: 40 - 2",
+      "<strong>Step 3: Subtraction</strong><br>40 - 2 = 38"
+    ],
+    rule: "Remember: Parentheses come first, followed by division, then subtraction."
+  },
+  {
+    q: "24 + 32 ÷ 8 =",
+    answer: 28,
+    monster: "Division Dragon",
+    hint: "Division comes before addition.",
+    steps: [
+      "<strong>Step 1: Division</strong><br>32 ÷ 8 = 4<br>Expression: 24 + 4",
+      "<strong>Step 2: Addition</strong><br>24 + 4 = 28"
+    ],
+    rule: "Do not add 24 and 32 first. Division has priority over addition."
+  },
+  {
+    q: "98 - (35 - 16) =",
+    answer: 79,
+    monster: "Bracket Beast",
+    hint: "Simplify the expression inside the parentheses first.",
+    steps: [
+      "<strong>Step 1: Grouping symbols</strong><br>35 - 16 = 19<br>Expression: 98 - 19",
+      "<strong>Step 2: Subtraction</strong><br>98 - 19 = 79"
+    ],
+    rule: "Always solve inside the parentheses before performing the remaining operation."
+  },
+  {
+    q: "60 ÷ (26 - 11) =",
+    answer: 4,
+    monster: "Parenthesis Phantom",
+    hint: "Find the difference between 26 and 11 first.",
+    steps: [
+      "<strong>Step 1: Grouping symbols</strong><br>26 - 11 = 15<br>Expression: 60 ÷ 15",
+      "<strong>Step 2: Division</strong><br>60 ÷ 15 = 4"
+    ],
+    rule: "Grouping symbols must be evaluated before division."
+  },
+  {
+    q: "9 × 3 - 6 ÷ 2 =",
+    answer: 24,
+    monster: "Operation Ogre",
+    hint: "Multiplication and division have equal priority. Work from left to right.",
+    steps: [
+      "<strong>Step 1: Multiplication</strong><br>9 × 3 = 27<br>Expression: 27 - 6 ÷ 2",
+      "<strong>Step 2: Division</strong><br>6 ÷ 2 = 3<br>Expression: 27 - 3",
+      "<strong>Step 3: Subtraction</strong><br>27 - 3 = 24"
+    ],
+    rule: "Multiplication and division are done from left to right before subtraction."
+  },
+  {
+    q: "42 + 6 × (15 - 9) =",
+    answer: 78,
+    monster: "Multiplication Minotaur",
+    hint: "Solve the parentheses first, then multiply.",
+    steps: [
+      "<strong>Step 1: Grouping symbols</strong><br>15 - 9 = 6<br>Expression: 42 + 6 × 6",
+      "<strong>Step 2: Multiplication</strong><br>6 × 6 = 36<br>Expression: 42 + 36",
+      "<strong>Step 3: Addition</strong><br>42 + 36 = 78"
+    ],
+    rule: "Multiplication must be completed before addition."
+  },
+  {
+    q: "81 - 12 ÷ 4 - (9 - 3) =",
+    answer: 72,
+    monster: "Final Boss: GEMDAS Titan",
+    hint: "First solve (9 - 3), then division, then subtraction from left to right.",
+    steps: [
+      "<strong>Step 1: Grouping symbols</strong><br>9 - 3 = 6<br>Expression: 81 - 12 ÷ 4 - 6",
+      "<strong>Step 2: Division</strong><br>12 ÷ 4 = 3<br>Expression: 81 - 3 - 6",
+      "<strong>Step 3: Subtract from left to right</strong><br>81 - 3 = 78<br>78 - 6 = 72"
+    ],
+    rule: "Addition and subtraction have equal priority. Always work from left to right."
+  }
+];
+
+let current = 0;
+let score = 0;
+let xp = 0;
+let timeLeft = 60;
+let timer = null;
+let answered = false;
+let heroHP = 100;
+let enemyHP = 100;
+let review = [];
+
+const $ = id => document.getElementById(id);
+
+function loadQuestion() {
+  clearInterval(timer);
+  answered = false;
+  timeLeft = 60;
+  enemyHP = 100;
+
+  const item = questions[current];
+
+  $("qNum").textContent = `${current + 1} / ${questions.length}`;
+  $("score").textContent = score;
+  $("xp").textContent = xp;
+  $("progress").style.width =
+    (current / questions.length * 100) + "%";
+
+  $("level").textContent = `LEVEL ${current + 1}`;
+  $("question").textContent = item.q;
+  $("monsterName").textContent = item.monster;
+  $("enemyHP").textContent = 100;
+  $("enemyBar").style.width = "100%";
+
+  $("monster").textContent =
+    current === 6 ? "🐉" : ["👹","🐲","👾","👻","👺","🐂"][current];
+
+  $("answer").value = "";
+  $("answer").disabled = false;
+  $("submitBtn").disabled = false;
+  $("feedback").style.display = "none";
+  $("discussion").style.display = "none";
+  $("hint").style.display = "none";
+
+  $("time").textContent = timeLeft;
+  $("answer").focus();
+
+  timer = setInterval(() => {
+    timeLeft--;
+    $("time").textContent = timeLeft;
+
+    if (timeLeft <= 10) {
+      $("time").style.color = "#ff0000";
+    } else {
+      $("time").style.color = "#e44747";
+    }
+
+    if (timeLeft <= 0) {
+      clearInterval(timer);
+      if (!answered) {
+        checkAnswer(true);
+      }
+    }
+  }, 1000);
+}
+
+function checkAnswer(timeout = false) {
+  if (answered) return;
+
+  const item = questions[current];
+  const input = $("answer").value.trim();
+
+  if (!timeout && input === "") {
+    alert("Please enter your answer first!");
+    return;
+  }
+
+  answered = true;
+  clearInterval(timer);
+
+  const userAnswer = timeout ? null : Number(input);
+  const correct = !timeout && userAnswer === item.answer;
+
+  $("answer").disabled = true;
+  $("submitBtn").disabled = true;
+
+  if (correct) {
+    score++;
+    xp += 100;
+    enemyHP = 0;
+    $("enemyHP").textContent = enemyHP;
+    $("enemyBar").style.width = "0%";
+
+    $("feedback").className = "feedback correct";
+    $("feedback").innerHTML =
+      "🎉 <strong>Excellent! Correct Answer!</strong><br>" +
+      "You defeated the monster and earned 100 XP!";
+  } else {
+    heroHP = Math.max(0, heroHP - 10);
+    $("heroHP").textContent = heroHP;
+    $("heroBar").style.width = heroHP + "%";
+
+    $("feedback").className = "feedback wrong";
+    $("feedback").innerHTML =
+      (timeout
+        ? "⏰ Time's up!"
+        : "❌ Incorrect answer!") +
+      "<br>The correct answer is <strong>" +
+      item.answer + "</strong>. Study the solution below!";
+  }
+
+  $("feedback").style.display = "block";
+
+  $("score").textContent = score;
+  $("xp").textContent = xp;
+
+  $("steps").innerHTML = item.steps.map(
+    (s, i) => `<div class="step">${s}</div>`
+  ).join("");
+
+  $("ruleNote").innerHTML = "💡 <strong>Remember:</strong> " + item.rule;
+
+  $("discussion").style.display = "block";
+
+  review.push({
+    question: item.q,
+    answer: item.answer,
+    correct: correct,
+    user: timeout ? "Time's up" : input
+  });
+
+  $("progress").style.width =
+    ((current + 1) / questions.length * 100) + "%";
+}
+
+function showHint() {
+  if (answered) return;
+  $("hint").innerHTML =
+    "💡 <strong>Hint:</strong> " + questions[current].hint;
+  $("hint").style.display = "block";
+}
+
+function nextQuestion() {
+  if (!answered) return;
+
+  current++;
+
+  if (current < questions.length) {
+    loadQuestion();
+  } else {
+    finishGame();
+  }
+}
+
+function finishGame() {
+  clearInterval(timer);
+  $("game").style.display = "none";
+  $("result").style.display = "block";
+
+  $("finalScore").textContent = `${score} / ${questions.length}`;
+  $("finalXP").textContent = `Total Experience Points: ${xp} XP`;
+
+  let message = "";
+
+  if (score === 7) {
+    message = "Perfect score! You are the GEMDAS Grand Master!";
+    $("trophy").textContent = "👑";
+  } else if (score >= 5) {
+    message = "Great work! You are a GEMDAS Champion!";
+    $("trophy").textContent = "🏆";
+  } else if (score >= 3) {
+    message = "Good effort! Keep practicing your order of operations!";
+    $("trophy").textContent = "🥈";
+  } else {
+    message = "Keep learning! Review the discussions and try again!";
+    $("trophy").textContent = "📚";
+  }
+
+  $("resultMessage").textContent = message;
+
+  $("reviewList").innerHTML = review.map((r, i) => `
+    <div class="review">
+      <strong>Question ${i + 1}:</strong> ${r.question}<br>
+      Your answer: ${r.user}<br>
+      Correct answer: ${r.answer}<br>
+      Result: ${r.correct ? "✅ Correct" : "❌ Incorrect"}
+    </div>
+  `).join("");
+}
+
+function restartGame() {
+  current = 0;
+  score = 0;
+  xp = 0;
+  heroHP = 100;
+  enemyHP = 100;
+  review = [];
+
+  $("heroHP").textContent = 100;
+  $("heroBar").style.width = "100%";
+  $("game").style.display = "block";
+  $("result").style.display = "none";
+
+  loadQuestion();
+}
+
+$("answer").addEventListener("keydown", function(e) {
+  if (e.key === "Enter") {
+    checkAnswer();
+  }
+});
+
+loadQuestion();
+</script>
+
+</body>
+</html>
